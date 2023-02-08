@@ -21,7 +21,7 @@ enum osTypes {
 };
 
 interface iDevInfoRequest {
-    developerSince: string,
+    developerSince: Date,
     preferredOS: osTypes
 };
 

@@ -7,7 +7,12 @@ import { createDevInfoRequiredKeys, createDevRequiredKeys, iDevInfoRequest, iDev
 
 const createDev = async (req: Request, res: Response): Promise<Response> => {
 
-    const reqData: iDevRequest = req.body;
+    const { name, email } = req.body;
+    
+    const reqData: iDevRequest = {
+        "name": name,
+        "email": email
+    };
 
     //Verify keys
     const requestKeys: string[] = Object.keys(reqData);
@@ -17,11 +22,11 @@ const createDev = async (req: Request, res: Response): Promise<Response> => {
         return requestKeys.includes(key);
     });
 
-    if (!hasRequiredKeys || requestKeys.length > requiredKeys.length) {
+    if (!hasRequiredKeys) {
         return res.status(400).json({
-            message: "The request must and should contain only name and email"
-        })
-    }
+            message: "The request must contain name and email"
+        });
+    };
 
     const queryString: string = format(
         `
