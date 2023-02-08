@@ -7,10 +7,10 @@ import { createDevInfoRequiredKeys, createDevRequiredKeys, iDevInfoRequest, iDev
 
 const createDev = async (req: Request, res: Response): Promise<Response> => {
 
-    const devData: iDevRequest = req.body;
+    const reqData: iDevRequest = req.body;
 
     //Verify keys
-    const requestKeys: string[] = Object.keys(devData);
+    const requestKeys: string[] = Object.keys(reqData);
     const requiredKeys: createDevRequiredKeys[] = ["name", "email"];
 
     const hasRequiredKeys = requiredKeys.every((key) => {
@@ -23,29 +23,6 @@ const createDev = async (req: Request, res: Response): Promise<Response> => {
         })
     }
 
-    //Verify if email already exist
-    const queryStringVerify = `
-        SELECT
-            *
-        FROM 
-            developers
-        WHERE
-            email = $1;
-    `;
-
-    const queryConfigVerify: QueryConfig = {
-        text: queryStringVerify,
-        values: [devData.email]
-    };
-
-    const queryResultVerify: tDevResult = await client.query(queryConfigVerify);
-
-    if (queryResultVerify.rowCount) {
-        return res.status(409).json({
-            message: "Email already exists, try another one."
-        })
-    }
-
     const queryString: string = format(
         `
             INSERT INTO
@@ -53,8 +30,8 @@ const createDev = async (req: Request, res: Response): Promise<Response> => {
             VALUES (%L)
             RETURNING *;
         `,
-        Object.keys(devData),
-        Object.values(devData)
+        Object.keys(reqData),
+        Object.values(reqData)
     );
 
     const queryResult: tDevResult = await client.query(queryString);
@@ -185,6 +162,172 @@ const listDev = async (req: Request, res: Response): Promise<Response> => {
     const queryResult: tDevInfoFullResult = await client.query(queryConfig);
 
     return res.json(queryResult.rows[0]);
-}
+};
 
-export { createDev, createDevInfo, listAllDevs, listDev };
+const updateDev = async (req: Request, res: Response): Promise<Response> => {
+
+    const devId = parseInt(req.params.id);
+
+    const reqData = {
+        "name": req.body.name,
+        "email": req.body.email
+    };
+
+    if (!req.body.name) {
+        delete reqData.name;
+    };
+
+    if (!req.body.email) {
+        delete reqData.email;
+    };
+
+    const requestKeys: string[] = Object.keys(reqData); 
+    
+    if (!requestKeys.length) {
+        return res.status(400).json({
+            message: "At least one of those keys must be sent.",
+            keys: ["name", "email"]
+        });
+    };
+
+    const queryString: string = format(
+        `
+            UPDATE
+                developers
+            SET (%I) = ROW(%L)
+            WHERE
+                id = $1
+            RETURNING *;
+        `,
+        Object.keys(reqData),
+        Object.values(reqData)
+    );
+
+    const queryConfig: QueryConfig = {
+        text: queryString,
+        values: [devId]
+    };
+
+    const queryResult: tDevResult = await client.query(queryConfig);
+
+    return res.status(200).json(queryResult.rows[0]);
+};
+
+const updateDevInfo = async (req: Request, res: Response): Promise<Response> => {
+
+    const devId = parseInt(req.params.id);
+
+    const reqData = {
+        "developerSince": req.body.developerSince,
+        "preferredOS": req.body.preferredOS
+    };
+
+    if (!req.body.developerSince) {
+        delete reqData.developerSince;
+    };
+    
+    if (!req.body.preferredOS) {
+        delete reqData.preferredOS;
+    };
+
+    const requestKeys: string[] = Object.keys(reqData);
+
+    if (!requestKeys.length) {
+        return res.status(400).json({
+            message: "At least one of those keys must be sent.",
+            keys: ["developerSince", "preferredOS"]
+        })
+    };
+
+    let queryString: string = `
+        SELECT
+            *
+        FROM
+            developers
+        WHERE
+            id = $1
+    `;
+
+    let queryConfig: QueryConfig = {
+        text: queryString,
+        values: [devId]
+    }
+
+    const queryResultDevInfoId: tDevResult = await client.query(queryConfig);
+
+    queryString = format(
+        `
+            UPDATE
+                developers_info
+            SET (%I) = ROW (%L)
+            WHERE
+                id = $1
+            RETURNING *;
+        `,
+        Object.keys(reqData),
+        Object.values(reqData)
+    )
+
+    queryConfig = {
+        text: queryString,
+        values: [queryResultDevInfoId.rows[0].devInfoId]
+    };
+
+    const queryResult: tDevInfoResult = await client.query(queryConfig);
+
+    return res.status(200).json(queryResult.rows[0]);
+};
+
+const deleteDev = async (req: Request, res: Response): Promise<Response> => {
+
+    const devId: number = parseInt(req.params.id);
+
+    let queryString: string = `
+        SELECT
+            *
+        FROM
+            developers
+        WHERE
+            id = $1;
+    `;
+
+    let queryConfig: QueryConfig = {
+        text: queryString,
+        values: [devId]
+    };
+
+    const queryResultDevInfoId: tDevResult = await client.query(queryConfig);
+
+    if (!queryResultDevInfoId.rows[0].devInfoId) {
+        queryString = `
+            DELETE FROM
+                developers
+            WHERE
+                id = $1;
+        `;
+
+        queryConfig = {
+            text: queryString,
+            values: [devId]
+        };
+    }
+    else {
+        queryString = `
+            DELETE FROM
+                developers_info
+            WHERE 
+                id = $1;
+        `;
+    
+        queryConfig = {
+            text: queryString,
+            values: [queryResultDevInfoId.rows[0].devInfoId]
+        };
+    };
+
+    await client.query(queryConfig);
+
+    return res.status(204).send();
+};
+
+export { createDev, createDevInfo, listAllDevs, listDev, updateDev, updateDevInfo, deleteDev };

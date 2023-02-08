@@ -44,5 +44,6 @@ export {
     iDevInfoRequest, 
     tDevInfoResult,
     createDevInfoRequiredKeys,
-    tDevInfoFullResult 
+    tDevInfoFullResult,
+    osTypes 
 };
