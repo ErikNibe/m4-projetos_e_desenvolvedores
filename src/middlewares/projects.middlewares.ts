@@ -3,6 +3,7 @@ import { QueryConfig } from "pg";
 import { client } from "../database";
 
 import { tDevResult } from "../interfaces/developers.interfaces";
+import { tProjectResult } from "../interfaces/projects.interfaces";
 
 const verifyDevExistsProjects = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     const { devId } = req.body;
@@ -39,4 +40,33 @@ const verifyDevExistsProjects = async (req: Request, res: Response, next: NextFu
     return next();
 };
 
-export { verifyDevExistsProjects };
+const verifyProjectExists = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+
+    const projectId: number = parseInt(req.params.id);
+
+    const queryString: string = `
+        SELECT
+            *
+        FROM
+            projects
+        WHERE
+            id = $1;
+    `;
+
+    const queryConfig: QueryConfig = {
+        text: queryString,
+        values: [projectId]
+    };
+
+    const queryResult: tProjectResult = await client.query(queryConfig);
+
+    if (!queryResult.rowCount) {
+        return res.status(404).json({
+            message: "Project not found."
+        });
+    };
+
+    return next();
+};
+
+export { verifyDevExistsProjects, verifyProjectExists };

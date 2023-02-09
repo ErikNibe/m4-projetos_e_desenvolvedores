@@ -22,11 +22,25 @@ interface iProjectTechnologies extends iProject {
     technologyName: string | null
 };
 
+interface iProjectTechnology {
+    id: number,
+    addedIn: Date,
+    projectId: number,
+    technologyId: number
+};
+
+type iProjectTechnologyResult = QueryResult<iProjectTechnology>;
+
 type tProjectTechnologiesResult = QueryResult<iProjectTechnologies>;
 
 type tRequiredKeysProject = "name" | "description" | "estimatedTime" | "repository" | "startDate" | "devId";
 
 type tAllowedValuesTechnology = "JavaScript" | "Python" | "React" | "Express.js" | "HTML" | "CSS" | "Django" | "PostgreSQL" | "MongoDB"; 
+
+interface iTechnologyProjectRequest {
+    name: string,
+    addedIn: Date
+};
 
 interface iTechnology {
     id: number,
@@ -35,11 +49,34 @@ interface iTechnology {
 
 type tTechnologyResult = QueryResult<iTechnology>;
 
+interface iDevProjects {
+    id: number,
+    name: string,
+    devInfoId: number | null,
+    developerSince: Date | null,
+    preferredOS: string | null,
+    projectId: number | null,
+    projectName: string | null,
+    description: string | null,
+    estimatedTime: string | null,
+    repository: string | null,
+    startDate: Date | null,
+    endDate?: Date | null,
+    addedIn: Date | null,
+    technologyId: number | null,
+    technologyName: number | null
+};
+
+type tDevProjectsResult = QueryResult<iDevProjects>;
+
 export { 
     iProjectRequest, 
     tProjectResult, 
     tRequiredKeysProject, 
     tProjectTechnologiesResult,
     tAllowedValuesTechnology,
-    tTechnologyResult 
+    iTechnologyProjectRequest,
+    tTechnologyResult,
+    iProjectTechnologyResult,
+    tDevProjectsResult
 };
