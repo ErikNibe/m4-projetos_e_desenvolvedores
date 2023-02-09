@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS projects (
 	"startDate" DATE NOT NULL,
 	"endDate" DATE,
 	"devId" INTEGER NOT NULL,
-	FOREIGN KEY ("devId") REFERENCES developers("id")
+	FOREIGN KEY ("devId") REFERENCES developers("id") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS technologies (

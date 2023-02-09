@@ -7,7 +7,7 @@ import { tProjectResult } from "../interfaces/projects.interfaces";
 
 const verifyDevExistsProjects = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     const { devId } = req.body;
-    console.log(devId);
+  
 
     if (!devId) {
         return res.status(400).json({

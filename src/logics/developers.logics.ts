@@ -15,13 +15,13 @@ const createDev = async (req: Request, res: Response): Promise<Response> => {
     };
 
     //Verify keys
-    const requestKeys: string[] = Object.keys(reqData);
+    const requestKeys: string[] = Object.keys(req.body);
     const requiredKeys: createDevRequiredKeys[] = ["name", "email"];
 
     const hasRequiredKeys = requiredKeys.every((key) => {
         return requestKeys.includes(key);
     });
-
+  
     if (!hasRequiredKeys) {
         return res.status(400).json({
             message: "The request must contain name and email"
