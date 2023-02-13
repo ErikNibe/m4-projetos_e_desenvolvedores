@@ -83,9 +83,16 @@ const createProject = async (req: Request, res:Response): Promise<Response> => {
     });
 
     if (!hasRequiredKeys) {
+
+        const missingKeys = requiredKeys.filter((key) => {
+            if (!reqKeys.includes(key)) {
+                return key;
+            }
+        });
+
         return res.status(400).json({
             message: "The request is missing one or more required keys",
-            keys: ["name", "description", "estimatedTime", "repository", "startDate", "devId"]
+            missingKeys: missingKeys
         });
     };
 
@@ -355,7 +362,7 @@ const deleteProjectTechnology = async (req: Request, res: Response): Promise<Res
     const allowedValues: tAllowedValuesTechnology[] = ["CSS", "Django", "Express.js", "HTML", "JavaScript", "MongoDB", "PostgreSQL", "Python", "React"];
 
     if (!queryResultVerifyTechExists.rowCount) {
-        return res.status(400).json({
+        return res.status(404).json({
             message: "Technology not supported",
             options: allowedValues
         });
@@ -378,7 +385,7 @@ const deleteProjectTechnology = async (req: Request, res: Response): Promise<Res
     const queryResult = await client.query(queryConfig);
 
     if (!queryResult.rowCount) {
-        return res.status(400).json({
+        return res.status(404).json({
             message: `Technology ${technologyName} not found on this project.`
         });
     };
