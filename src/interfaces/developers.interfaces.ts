@@ -7,7 +7,7 @@ interface iDevRequest {
 
 interface iDev extends iDevRequest {
     id: number,
-    devInfoId: null | number
+    developerInfoId: null | number
 };
 
 type tDevResult = QueryResult<iDev>;

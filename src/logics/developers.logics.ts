@@ -67,7 +67,7 @@ const createDevInfo = async (req: Request, res: Response): Promise<Response> => 
         });
     };
 
-    // Verify if dev already have devInfoId
+    // Verify if dev already have developerInfoId
     const queryStringVerify: string = `
         SELECT 
             *
@@ -84,7 +84,7 @@ const createDevInfo = async (req: Request, res: Response): Promise<Response> => 
 
     const queryResultVerify: tDevResult = await client.query(queryConfigVerify);
 
-    if (queryResultVerify.rows[0].devInfoId !== null) {
+    if (queryResultVerify.rows[0].developerInfoId !== null) {
         return res.status(404).json({
             message: "Developer already have dev info."
         })
@@ -108,7 +108,7 @@ const createDevInfo = async (req: Request, res: Response): Promise<Response> => 
         UPDATE
             developers
         SET
-            "devInfoId" = $1
+            "developerInfoId" = $1
         WHERE
             id = $2
         RETURNING *;
@@ -134,7 +134,7 @@ const listAllDevs = async (req: Request, res: Response): Promise<Response> => {
         FROM
             developers d
         LEFT OUTER JOIN
-            developers_info di ON d."devInfoId" = di.id;
+            developers_info di ON d."developerInfoId" = di.id;
     `;
 
     const queryResult: tDevInfoFullResult = await client.query(queryString);
@@ -154,7 +154,7 @@ const listDev = async (req: Request, res: Response): Promise<Response> => {
         FROM
             developers d    
         LEFT OUTER JOIN
-            developers_info di ON d."devInfoId" = di.id
+            developers_info di ON d."developerInfoId" = di.id
         WHERE
             d.id = $1;  
     `;
@@ -275,7 +275,7 @@ const updateDevInfo = async (req: Request, res: Response): Promise<Response> => 
 
     queryConfig = {
         text: queryString,
-        values: [queryResultDevInfoId.rows[0].devInfoId]
+        values: [queryResultDevInfoId.rows[0].developerInfoId]
     };
 
     const queryResult: tDevInfoResult = await client.query(queryConfig);
@@ -303,7 +303,7 @@ const deleteDev = async (req: Request, res: Response): Promise<Response> => {
 
     const queryResultDevInfoId: tDevResult = await client.query(queryConfig);
 
-    if (!queryResultDevInfoId.rows[0].devInfoId) {
+    if (!queryResultDevInfoId.rows[0].developerInfoId) {
         queryString = `
             DELETE FROM
                 developers
@@ -326,7 +326,7 @@ const deleteDev = async (req: Request, res: Response): Promise<Response> => {
     
         queryConfig = {
             text: queryString,
-            values: [queryResultDevInfoId.rows[0].devInfoId]
+            values: [queryResultDevInfoId.rows[0].developerInfoId]
         };
     };
 

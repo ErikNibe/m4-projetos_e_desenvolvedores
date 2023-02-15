@@ -58,7 +58,7 @@ const listProject = async (req: Request, res: Response): Promise<Response> => {
 
 const createProject = async (req: Request, res:Response): Promise<Response> => {
 
-    const { name, description, estimatedTime, repository, startDate, endDate, devId } = req.body;
+    const { name, description, estimatedTime, repository, startDate, endDate, developerId } = req.body;
 
     const reqData: iProjectRequest = {
         "name": name,
@@ -67,14 +67,14 @@ const createProject = async (req: Request, res:Response): Promise<Response> => {
         "repository":repository ,
         "startDate": startDate,
         "endDate": endDate,
-        "devId": devId
+        "developerId": developerId
     };
 
     if (!endDate) {
         delete reqData.endDate;
     };
 
-    const requiredKeys: tRequiredKeysProject[] = ["name", "description", "estimatedTime", "repository", "startDate", "devId"];
+    const requiredKeys: tRequiredKeysProject[] = ["name", "description", "estimatedTime", "repository", "startDate", "developerId"];
 
     const reqKeys: string [] = Object.keys(req.body);
 
@@ -311,9 +311,9 @@ const listDevProjects = async (req: Request, res: Response): Promise<Response> =
         FROM 	
             developers d
         LEFT JOIN
-            developers_info di ON d."devInfoId" = di.id
+            developers_info di ON d."developerInfoId" = di.id
         LEFT JOIN
-            projects p ON d.id = p."devId"
+            projects p ON d.id = p."developerId"
         LEFT JOIN
             projects_technologies pt ON p.id = pt."projectId"
         LEFT JOIN 

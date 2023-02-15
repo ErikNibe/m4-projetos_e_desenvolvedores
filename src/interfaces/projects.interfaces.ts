@@ -7,7 +7,7 @@ interface iProjectRequest {
     repository: string,
     startDate: Date,
     endDate?: Date,
-    devId: number
+    developerId: number
 };
 
 interface iProject extends iProjectRequest {
@@ -33,7 +33,7 @@ type iProjectTechnologyResult = QueryResult<iProjectTechnology>;
 
 type tProjectTechnologiesResult = QueryResult<iProjectTechnologies>;
 
-type tRequiredKeysProject = "name" | "description" | "estimatedTime" | "repository" | "startDate" | "devId";
+type tRequiredKeysProject = "name" | "description" | "estimatedTime" | "repository" | "startDate" | "developerId";
 
 type tAllowedValuesTechnology = "JavaScript" | "Python" | "React" | "Express.js" | "HTML" | "CSS" | "Django" | "PostgreSQL" | "MongoDB"; 
 
@@ -52,7 +52,7 @@ type tTechnologyResult = QueryResult<iTechnology>;
 interface iDevProjects {
     id: number,
     name: string,
-    devInfoId: number | null,
+    developerInfoId: number | null,
     developerSince: Date | null,
     preferredOS: string | null,
     projectId: number | null,

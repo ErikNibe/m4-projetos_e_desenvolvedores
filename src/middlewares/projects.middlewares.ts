@@ -6,12 +6,12 @@ import { tDevResult } from "../interfaces/developers.interfaces";
 import { tProjectResult } from "../interfaces/projects.interfaces";
 
 const verifyDevExistsProjects = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-    const { devId } = req.body;
+    const { developerId } = req.body;
   
 
-    if (!devId) {
+    if (!developerId) {
         return res.status(400).json({
-            message: "the devId must be informed."
+            message: "the developerId must be informed."
         });
     };
 
@@ -26,7 +26,7 @@ const verifyDevExistsProjects = async (req: Request, res: Response, next: NextFu
 
     const queryConfig: QueryConfig = {
         text: queryString,
-        values: [devId]
+        values: [developerId]
     };
 
     const queryResult: tDevResult = await client.query(queryConfig);

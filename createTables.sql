@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS developers (
 	"name" VARCHAR(50) NOT NULL,
 	"email" VARCHAR(50) UNIQUE NOT NULL,
 	"developerInfoId" INTEGER UNIQUE,
-	FOREIGN KEY ("devInfoId") REFERENCES developers_info("id") ON DELETE CASCADE
+	FOREIGN KEY ("developerInfoId") REFERENCES developers_info("id") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS projects (
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS projects (
 	"startDate" DATE NOT NULL,
 	"endDate" DATE,
 	"developerId" INTEGER NOT NULL,
-	FOREIGN KEY ("devId") REFERENCES developers("id") ON DELETE CASCADE
+	FOREIGN KEY ("developerId") REFERENCES developers("id") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS technologies (
